@@ -47,11 +47,15 @@ describe 'Hangar' do
 
   context 'with missing resources' do
     it 'returns an error if no stemcell could be found' do
-
+      expect {
+        hangar("--stemcell-dir a/missing/dir --release-dir #{release_dir}")
+      }.to raise_error /Could not find a stemcell in directory: a\/missing\/dir/
     end
 
     it 'returns an error if no release could be found' do
-
+      expect {
+        hangar("--stemcell-dir #{stemcell_dir} --release-dir a/missing/dir")
+      }.to raise_error /Could not find a release in directory: a\/missing\/dir/
     end
   end
 end

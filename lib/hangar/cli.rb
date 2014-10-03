@@ -11,6 +11,9 @@ module Hangar
       stemcell = Dir[File.join(stemcell_dir, '*')].first
       release = Dir[File.join(release_dir, '*')].first
 
+      raise "Could not find a stemcell in directory: #{stemcell_dir}" if stemcell.nil?
+      raise "Could not find a release in directory: #{release_dir}" if release.nil?
+
       Zip::File.open('p-concourse.pivotal', Zip::File::CREATE) do |zip|
         zip.add(File.join('stemcells', File.basename(stemcell)), stemcell)
         zip.add(File.join('releases', File.basename(release)), release)
