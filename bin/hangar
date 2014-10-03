@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "hangar/cli"
+
+Hangar::Cli.new(ARGV).run!
