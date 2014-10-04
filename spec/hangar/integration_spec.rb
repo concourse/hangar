@@ -47,6 +47,14 @@ describe 'Hangar' do
       expect(files_in('p-product.pivotal')).to include('releases/release.tgz')
     end
 
+    context 'with missing args' do
+      it 'returns an error if no product name is given' do
+        expect {
+          hangar("--stemcell-dir #{stemcell_dir} --release-dir a/missing/dir")
+        }.to raise_error /Please specify a product name \(--product-name\)/
+      end
+    end
+
     context 'with missing resources' do
       it 'returns an error if no stemcell could be found' do
         expect {
@@ -58,12 +66,6 @@ describe 'Hangar' do
         expect {
           hangar("--stemcell-dir #{stemcell_dir} --release-dir a/missing/dir --product-name #{product_name}")
         }.to raise_error /Could not find a release in directory: a\/missing\/dir/
-      end
-
-      it 'returns an error if no product name is given' do
-        expect {
-          hangar("--stemcell-dir #{stemcell_dir} --release-dir a/missing/dir")
-        }.to raise_error /Please specify a product name \(--product-name\)/
       end
     end
   end
