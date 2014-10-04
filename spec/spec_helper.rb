@@ -11,8 +11,6 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.default_formatter = 'doc'
 
-  config.profile_examples = 10
-
   config.order = :random
   Kernel.srand config.seed
 end
