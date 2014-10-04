@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'optparse'
 require 'zip'
 
 module Hangar
@@ -8,13 +9,16 @@ module Hangar
     end
     
     def run!
+      raise OptionParser::MissingArgument, 'Please specify a product name (--product-name)' unless parsed_options.has_key?(:product_name)
+
       stemcell = Dir[File.join(stemcell_dir, '*')].first
       release = Dir[File.join(release_dir, '*')].first
 
       raise "Could not find a stemcell in directory: #{stemcell_dir}" if stemcell.nil?
       raise "Could not find a release in directory: #{release_dir}" if release.nil?
 
-      Zip::File.open('p-concourse.pivotal', Zip::File::CREATE) do |zip|
+      filename = "#{parsed_options.fetch(:product_name)}.pivotal"
+      Zip::File.open(filename, Zip::File::CREATE) do |zip|
         zip.add(File.join('stemcells', File.basename(stemcell)), stemcell)
         zip.add(File.join('releases', File.basename(release)), release)
       end
@@ -37,6 +41,10 @@ module Hangar
 
       options = {}
       OptionParser.new do |opts|
+        opts.on('-n', '--product-name NAME', 'name of product to create') do |r|
+          options[:product_name] = r
+        end
+
         opts.on('-s', '--stemcell-dir DIR', 'directory containing stemcell') do |s|
           options[:stemcell_dir] = s
         end
