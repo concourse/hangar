@@ -29,7 +29,7 @@ describe 'Hangar' do
       FileUtils.rm_rf('p-product.pivotal')
     end
 
-    it 'creates a p-concourse.pivotal file' do
+    it 'creates a .pivotal file' do
       expect {
         hangar("--stemcell-dir #{stemcell_dir} --release-dir #{release_dir} --product-name #{product_name}")
       }.to change { File.exist? 'p-product.pivotal' }.from(false).to(true)
