@@ -27,24 +27,24 @@ module Hangar
     attr_reader :argv
 
     def product_name
-      parsed_options.fetch(:product_name) {
+      options.fetch(:product_name) {
         raise OptionParser::MissingArgument, 'Please specify a product name (--product-name)'
       }
     end
 
     def stemcell_dir
-      parsed_options.fetch(:stemcell_dir) {
+      options.fetch(:stemcell_dir) {
         raise OptionParser::MissingArgument, 'Please specify a stemcell directory (--stemcell-dir)'
       }
     end
 
     def release_dir
-      parsed_options.fetch(:release_dir) {
+      options.fetch(:release_dir) {
         raise OptionParser::MissingArgument, 'Please specify a release directory (--release-dir)'
       }
     end
 
-    def parsed_options
+    def options
       return @parsed_options if @parsed_options
 
       options = {}
