@@ -1,5 +1,5 @@
 ---
-image: docker:///dockerfile/ruby
+image: docker:///ruby#2.1
 
 run:
   path: hangar/scripts/ci.sh
