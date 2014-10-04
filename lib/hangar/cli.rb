@@ -9,15 +9,13 @@ module Hangar
     end
     
     def run!
-      raise OptionParser::MissingArgument, 'Please specify a product name (--product-name)' unless parsed_options.has_key?(:product_name)
-
       stemcell = Dir[File.join(stemcell_dir, '*')].first
       release = Dir[File.join(release_dir, '*')].first
 
       raise "Could not find a stemcell in directory: #{stemcell_dir}" if stemcell.nil?
       raise "Could not find a release in directory: #{release_dir}" if release.nil?
 
-      filename = "#{parsed_options.fetch(:product_name)}.pivotal"
+      filename = "#{product_name}.pivotal"
       Zip::File.open(filename, Zip::File::CREATE) do |zip|
         zip.add(File.join('stemcells', File.basename(stemcell)), stemcell)
         zip.add(File.join('releases', File.basename(release)), release)
@@ -27,6 +25,12 @@ module Hangar
     private
 
     attr_reader :argv
+
+    def product_name
+      parsed_options.fetch(:product_name) {
+        raise OptionParser::MissingArgument, 'Please specify a product name (--product-name)'
+      }
+    end
 
     def stemcell_dir
       parsed_options.fetch(:stemcell_dir) {
