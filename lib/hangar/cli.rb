@@ -19,6 +19,7 @@ module Hangar
       Zip::File.open(filename, Zip::File::CREATE) do |zip|
         zip.add(File.join('stemcells', File.basename(stemcell)), stemcell)
         zip.add(File.join('releases', File.basename(release)), release)
+        zip.add('metadata/metadata.yml', 'build.yml')
       end
     end
 

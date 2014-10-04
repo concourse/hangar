@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 require 'fileutils'
+require 'yaml'
 require 'zip'
 
 require 'hangar/cli'
@@ -20,6 +21,13 @@ describe 'Hangar' do
     entries
   end
 
+  def extract_contents_from(zip, filename)
+    Zip::File.open(zip) do |zip_file|
+      entry = zip_file.glob(filename).first
+      entry.get_input_stream.read
+    end
+  end
+
   def args(arg_hash)
     output = []
 
@@ -30,7 +38,7 @@ describe 'Hangar' do
     output.join(' ')
   end
 
-  describe 'building .pivotal files' do
+  describe 'building a .pivotal file' do
     let(:stemcell_dir) { 'spec/assets/stemcell' }
     let(:release_dir) { 'spec/assets/release' }
     let(:product_name) { 'p-product' }
@@ -53,19 +61,30 @@ describe 'Hangar' do
       }.to change { File.exist? 'p-product.pivotal' }.from(false).to(true)
     end
 
-    it 'creates a zip file with the correct stemcell' do
+    it 'contains the correct stemcell' do
       hangar(args(valid_args))
 
       expect(files_in('p-product.pivotal')).to include('stemcells/stemcell.tgz')
     end
 
-    it 'creates a zip file with the correct release' do
+    it 'contains the correct release' do
       hangar(args(valid_args))
 
       expect(files_in('p-product.pivotal')).to include('releases/release.tgz')
     end
 
-    context 'with missing args' do
+    it 'contains valid YAML metadata' do
+      hangar(args(valid_args))
+
+      expect(files_in('p-product.pivotal')).to include('metadata/metadata.yml')
+
+      metadata_contents = extract_contents_from('p-product.pivotal', 'metadata/metadata.yml')
+      product_metadata = YAML.load(metadata_contents)
+
+      expect(product_metadata).to be_a Hash
+    end
+
+    context 'with missing arguments' do
       it 'returns an error if no product name is given' do
         missing_product_name = valid_args.reject { |k,v| k == 'product-name' }
 
