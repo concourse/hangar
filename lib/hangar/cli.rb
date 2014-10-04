@@ -29,7 +29,9 @@ module Hangar
     attr_reader :argv
 
     def stemcell_dir
-      parsed_options.fetch(:stemcell_dir)
+      parsed_options.fetch(:stemcell_dir) {
+        raise OptionParser::MissingArgument, 'Please specify a stemcell directory (--stemcell-dir)'
+      }
     end
 
     def release_dir

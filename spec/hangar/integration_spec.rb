@@ -73,6 +73,14 @@ describe 'Hangar' do
           hangar(args(missing_product_name))
         }.to raise_error /Please specify a product name \(--product-name\)/
       end
+
+      it 'returns an error if no stemcell directory is given' do
+        missing_stemcell_dir = valid_args.reject { |k,v| k == 'stemcell-dir' }
+
+        expect {
+          hangar(args(missing_stemcell_dir))
+        }.to raise_error /Please specify a stemcell directory \(--stemcell-dir\)/
+      end
     end
 
     context 'with missing resources' do
