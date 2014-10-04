@@ -81,6 +81,14 @@ describe 'Hangar' do
           hangar(args(missing_stemcell_dir))
         }.to raise_error /Please specify a stemcell directory \(--stemcell-dir\)/
       end
+
+      it 'returns an error if no release directory is given' do
+        missing_release_dir = valid_args.reject { |k,v| k == 'release-dir' }
+
+        expect {
+          hangar(args(missing_release_dir))
+        }.to raise_error /Please specify a release directory \(--release-dir\)/
+      end
     end
 
     context 'with missing resources' do

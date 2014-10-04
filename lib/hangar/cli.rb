@@ -39,7 +39,9 @@ module Hangar
     end
 
     def release_dir
-      parsed_options.fetch(:release_dir)
+      parsed_options.fetch(:release_dir) {
+        raise OptionParser::MissingArgument, 'Please specify a release directory (--release-dir)'
+      }
     end
 
     def parsed_options
