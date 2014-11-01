@@ -69,26 +69,4 @@ module Hangar
       end
     end
   end
-
-  class Stemcell
-    def name
-    end
-
-    def file
-    end
-
-    def version
-    end
-  end
-  
-  class Release
-    def name
-    end
-    
-    def file
-    end
-    
-    def version
-    end
-  end
 end
