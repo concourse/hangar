@@ -14,21 +14,26 @@ module Hangar
 
     def run!
       stemcell_path = Dir[File.join(stemcell_dir, '*.tgz')].first
-      release_path = Dir[File.join(release_dir, '*.tgz')].first
+      raise "Could not find a stemcell in directory: #{stemcell_dir}" if stemcell_path.nil?
+      
+      release_paths = release_dirs.map do |dir|
+        release_path = Dir[File.join(dir, '*.tgz')].first
+        raise "Could not find a release in directory: #{dir}" if release_path.nil?
+        release_path
+      end
 
       raise "Could not find a metadata template: #{metadata_template}" unless File.exist?(metadata_template)
-      raise "Could not find a stemcell in directory: #{stemcell_dir}" if stemcell_path.nil?
-      raise "Could not find a release in directory: #{release_dir}" if release_path.nil?
-
-      puts "Using stemcell: #{stemcell_path}"
-      puts "Using release: #{release_path}"
 
       filename = "#{product_name}.pivotal"
       Zip::File.open(filename, Zip::File::CREATE) do |zip|
         zip.add(File.join('stemcells', File.basename(stemcell_path)), stemcell_path)
-        zip.add(File.join('releases', File.basename(release_path)), release_path)
+        
+        release_paths.each do |path|
+          zip.add(File.join('releases', File.basename(path)), path)
+        end
+
         zip.get_output_stream('metadata/metadata.yml') do |os|
-          os.write template_result(stemcell_path, release_path, product_version)
+          os.write template_result(stemcell_path, release_paths, product_version)
         end
       end
     end
@@ -41,11 +46,9 @@ module Hangar
       Stemcell.new(path)
     end
 
-    def template_result(stemcell_path, releases_path, product_version)
+    def template_result(stemcell_path, release_paths, product_version)
       stemcell = stemcell(stemcell_path)
-      releases = [
-        Release.new(releases_path)
-      ]
+      releases = release_paths.map { |path| Release.new(path) }
 
       MetadataTemplate.from_file(metadata_template).result(product_name, product_version, stemcell, releases)
     end
@@ -68,10 +71,15 @@ module Hangar
       }
     end
 
-    def release_dir
-      options.fetch(:release_dir) {
-        raise OptionParser::MissingArgument, 'Please specify a release directory (--release-dir)'
-      }
+    def release_dirs
+      dirs = options.fetch(:release_dirs)
+
+      if dirs.empty?
+        raise OptionParser::MissingArgument,
+          'Please specify a release directory (--release-dir)'
+      end
+      
+      dirs
     end
 
     def metadata_template
@@ -83,7 +91,10 @@ module Hangar
     def options
       return @parsed_options if @parsed_options
 
-      options = {}
+      options = {
+        release_dirs: []
+      }
+
       OptionParser.new do |opts|
         opts.on('-n', '--product-name NAME', 'name of product to create') do |p|
           options[:product_name] = p
@@ -98,7 +109,7 @@ module Hangar
         end
 
         opts.on('-r', '--release-dir DIR', 'directory containing release') do |r|
-          options[:release_dir] = r
+          options[:release_dirs] << r
         end
 
         opts.on('-m', '--metadata-template FILE', 'metadata template file') do |m|

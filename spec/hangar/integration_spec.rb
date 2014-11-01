@@ -31,8 +31,10 @@ describe 'Hangar' do
   def args(arg_hash)
     output = []
 
-    arg_hash.each do |key, value|
-      output << "--#{key} #{value}"
+    arg_hash.each do |key, values|
+      values.each do |value|
+        output << "--#{key} #{value}"
+      end
     end
 
     output.join(' ')
@@ -41,17 +43,18 @@ describe 'Hangar' do
   describe 'building a .pivotal file' do
     let(:stemcell_dir) { 'spec/assets/stemcell' }
     let(:release_dir) { 'spec/assets/release' }
+    let(:other_release_dir) { 'spec/assets/other-release' }
     let(:product_name) { 'p-product' }
     let(:metadata_template_path) { 'spec/assets/metadata/metadata.yml.erb' }
     let(:product_version) { '0.3' }
 
     let(:valid_args) {
       {
-          'product-name' => product_name,
-          'stemcell-dir' => stemcell_dir,
-          'release-dir' => release_dir,
-          'metadata-template' => metadata_template_path,
-          'product-version' => product_version
+          'product-name' => [product_name],
+          'stemcell-dir' => [stemcell_dir],
+          'release-dir' => [release_dir, other_release_dir],
+          'metadata-template' => [metadata_template_path],
+          'product-version' => [product_version]
       }
     }
 
@@ -71,10 +74,11 @@ describe 'Hangar' do
       expect(files_in('p-product.pivotal')).to include('stemcells/bosh-stemcell-2751.3-vsphere-esxi-ubuntu-trusty-go_agent.tgz')
     end
 
-    it 'contains the correct release' do
+    it 'contains the both correct releases' do
       hangar(args(valid_args))
 
       expect(files_in('p-product.pivotal')).to include('releases/release-name-123.2.tgz')
+      expect(files_in('p-product.pivotal')).to include('releases/other-release-name-1.2.tgz')
     end
 
     it 'contains valid YAML metadata' do
@@ -134,7 +138,7 @@ describe 'Hangar' do
     context 'with missing resources' do
       it 'returns an error if no stemcell could be found' do
         bad_stemcell = valid_args.dup
-        bad_stemcell.store('stemcell-dir', 'a/missing/dir')
+        bad_stemcell.store('stemcell-dir', ['a/missing/dir'])
 
         expect {
           hangar(args(bad_stemcell))
@@ -143,7 +147,7 @@ describe 'Hangar' do
 
       it 'returns an error if no metadata could be found' do
         bad_stemcell = valid_args.dup
-        bad_stemcell.store('metadata-template', 'a/missing/file.yml.erb')
+        bad_stemcell.store('metadata-template', ['a/missing/file.yml.erb'])
 
         expect {
           hangar(args(bad_stemcell))
@@ -152,7 +156,7 @@ describe 'Hangar' do
 
       it 'returns an error if no release could be found' do
         bad_release = valid_args.dup
-        bad_release.store('release-dir', 'a/missing/dir')
+        bad_release.store('release-dir', ['a/missing/dir'])
 
         expect {
           hangar(args(bad_release))
