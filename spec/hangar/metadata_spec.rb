@@ -44,7 +44,7 @@ describe Hangar::MetadataTemplate do
       expect(output.fetch('stemcell').fetch('version')).to eq(stemcell.version)
       expect(output.fetch('stemcell').fetch('file')).to eq(stemcell.file)
     end
-    
+
     it 'templates the releases' do
       expect(output.fetch('releases').first.fetch('name')).to eq(releases.first.name)
       expect(output.fetch('releases').first.fetch('version')).to eq(releases.first.version)

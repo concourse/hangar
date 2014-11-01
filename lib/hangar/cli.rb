@@ -10,7 +10,7 @@ module Hangar
     def initialize(argv)
       @argv = argv
     end
-    
+
     def run!
       stemcell_path = Dir[File.join(stemcell_dir, '*')].first
       release_path = Dir[File.join(release_dir, '*')].first
@@ -32,11 +32,11 @@ module Hangar
     private
 
     attr_reader :argv
-    
+
     def stemcell(path)
       Stemcell.new(path)
     end
-    
+
     def template_result(stemcell_path, releases_path, product_version)
       stemcell = stemcell(stemcell_path)
       releases = [
@@ -69,7 +69,7 @@ module Hangar
         raise OptionParser::MissingArgument, 'Please specify a release directory (--release-dir)'
       }
     end
-    
+
     def metadata_template
       options.fetch(:metadata_template) {
         raise OptionParser::MissingArgument, 'Please specify a metadata template (--metadata-template)'
@@ -84,7 +84,7 @@ module Hangar
         opts.on('-n', '--product-name NAME', 'name of product to create') do |p|
           options[:product_name] = p
         end
-        
+
         opts.on('-v', '--product-version VERSION', 'version of product to create') do |v|
           options[:product_version] = v
         end
@@ -96,7 +96,7 @@ module Hangar
         opts.on('-r', '--release-dir DIR', 'directory containing release') do |r|
           options[:release_dir] = r
         end
-        
+
         opts.on('-m', '--metadata-template FILE', 'metadata template file') do |m|
           options[:metadata_template] = m
         end

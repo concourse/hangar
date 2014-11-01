@@ -84,7 +84,7 @@ describe 'Hangar' do
 
       metadata_contents = extract_contents_from('p-product.pivotal', 'metadata/metadata.yml')
       product_metadata = YAML.load(metadata_contents)
-      
+
       expect(product_metadata.fetch('releases').first.fetch('name')).to eq('release-name')
       expect(product_metadata.fetch('releases').first.fetch('version')).to eq('123.2')
     end
@@ -97,7 +97,7 @@ describe 'Hangar' do
           hangar(args(missing_product_name))
         }.to raise_error /Please specify a product name \(--product-name\)/
       end
-      
+
       it 'returns an error if no product version is given' do
         missing_product_version = valid_args.reject { |k,v| k == 'product-version' }
 
@@ -113,7 +113,7 @@ describe 'Hangar' do
           hangar(args(missing_stemcell_dir))
         }.to raise_error /Please specify a stemcell directory \(--stemcell-dir\)/
       end
-      
+
       it 'returns an error if no metadata template is given' do
         missing_template_path = valid_args.reject { |k,v| k == 'metadata-template' }
 
@@ -140,7 +140,7 @@ describe 'Hangar' do
           hangar(args(bad_stemcell))
         }.to raise_error /Could not find a stemcell in directory: a\/missing\/dir/
       end
-      
+
       it 'returns an error if no metadata could be found' do
         bad_stemcell = valid_args.dup
         bad_stemcell.store('metadata-template', 'a/missing/file.yml.erb')

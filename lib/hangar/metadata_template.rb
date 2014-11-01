@@ -47,10 +47,10 @@ module Hangar
             version: wrap(@stemcell.version),
         )
       end
-      
+
       def releases
         releases = {}
-        
+
         @releases.each do |release|
           releases[release.name] = OpenStruct.new(
             name: wrap(release.name),
@@ -58,7 +58,7 @@ module Hangar
             version: wrap(release.version),
           )
         end
-        
+
         releases
       end
 
