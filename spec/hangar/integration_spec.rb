@@ -43,13 +43,15 @@ describe 'Hangar' do
     let(:release_dir) { 'spec/assets/release' }
     let(:product_name) { 'p-product' }
     let(:metadata_template_path) { 'spec/assets/metadata/metadata.yml.erb' }
+    let(:product_version) { '0.3' }
 
     let(:valid_args) {
       {
           'product-name' => product_name,
           'stemcell-dir' => stemcell_dir,
           'release-dir' => release_dir,
-          'metadata-template' => metadata_template_path
+          'metadata-template' => metadata_template_path,
+          'product-version' => product_version
       }
     }
 
@@ -94,6 +96,14 @@ describe 'Hangar' do
         expect {
           hangar(args(missing_product_name))
         }.to raise_error /Please specify a product name \(--product-name\)/
+      end
+      
+      it 'returns an error if no product version is given' do
+        missing_product_version = valid_args.reject { |k,v| k == 'product-version' }
+
+        expect {
+          hangar(args(missing_product_version))
+        }.to raise_error /Please specify a product version \(--product-version\)/
       end
 
       it 'returns an error if no stemcell directory is given' do

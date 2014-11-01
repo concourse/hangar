@@ -24,7 +24,7 @@ module Hangar
         zip.add(File.join('stemcells', File.basename(stemcell_path)), stemcell_path)
         zip.add(File.join('releases', File.basename(release_path)), release_path)
         zip.get_output_stream('metadata/metadata.yml') do |os|
-          os.write template_result(stemcell_path, release_path)
+          os.write template_result(stemcell_path, release_path, product_version)
         end
       end
     end
@@ -37,17 +37,24 @@ module Hangar
       Stemcell.new(path)
     end
     
-    def template_result(stemcell_path, releases_path)
+    def template_result(stemcell_path, releases_path, product_version)
       stemcell = stemcell(stemcell_path)
       releases = [
         Release.new(releases_path)
       ]
-      MetadataTemplate.from_file(metadata_template).result(product_name, "0.1", stemcell, releases)
+
+      MetadataTemplate.from_file(metadata_template).result(product_name, product_version, stemcell, releases)
     end
 
     def product_name
       options.fetch(:product_name) {
         raise OptionParser::MissingArgument, 'Please specify a product name (--product-name)'
+      }
+    end
+
+    def product_version
+      options.fetch(:product_version) {
+        raise OptionParser::MissingArgument, 'Please specify a product version (--product-version)'
       }
     end
 
@@ -76,6 +83,10 @@ module Hangar
       OptionParser.new do |opts|
         opts.on('-n', '--product-name NAME', 'name of product to create') do |p|
           options[:product_name] = p
+        end
+        
+        opts.on('-v', '--product-version VERSION', 'version of product to create') do |v|
+          options[:product_version] = v
         end
 
         opts.on('-s', '--stemcell-dir DIR', 'directory containing stemcell') do |s|
