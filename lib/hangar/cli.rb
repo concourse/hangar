@@ -24,7 +24,7 @@ module Hangar
 
       raise "Could not find a metadata template: #{metadata_template}" unless File.exist?(metadata_template)
 
-      filename = "#{product_name}.pivotal"
+      filename = "#{product_name}-#{product_version}.pivotal"
       Zip::File.open(filename, Zip::File::CREATE) do |zip|
         zip.add(File.join('stemcells', File.basename(stemcell_path)), stemcell_path)
         

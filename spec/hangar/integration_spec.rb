@@ -47,6 +47,8 @@ describe 'Hangar' do
     let(:product_name) { 'p-product' }
     let(:metadata_template_path) { 'spec/assets/metadata/metadata.yml.erb' }
     let(:product_version) { '0.3' }
+    
+    let(:output_file) { 'p-product-0.3.pivotal' }
 
     let(:valid_args) {
       {
@@ -59,34 +61,34 @@ describe 'Hangar' do
     }
 
     before do
-      FileUtils.rm_rf('p-product.pivotal')
+      FileUtils.rm_rf(output_file)
     end
 
     it 'creates a .pivotal file' do
       expect {
         hangar(args(valid_args))
-      }.to change { File.exist? 'p-product.pivotal' }.from(false).to(true)
+      }.to change { File.exist? output_file }.from(false).to(true)
     end
 
     it 'contains the correct stemcell' do
       hangar(args(valid_args))
 
-      expect(files_in('p-product.pivotal')).to include('stemcells/bosh-stemcell-2751.3-vsphere-esxi-ubuntu-trusty-go_agent.tgz')
+      expect(files_in(output_file)).to include('stemcells/bosh-stemcell-2751.3-vsphere-esxi-ubuntu-trusty-go_agent.tgz')
     end
 
     it 'contains the both correct releases' do
       hangar(args(valid_args))
 
-      expect(files_in('p-product.pivotal')).to include('releases/release-name-123.2.tgz')
-      expect(files_in('p-product.pivotal')).to include('releases/other-release-name-1.2.tgz')
+      expect(files_in(output_file)).to include('releases/release-name-123.2.tgz')
+      expect(files_in(output_file)).to include('releases/other-release-name-1.2.tgz')
     end
 
     it 'contains valid YAML metadata' do
       hangar(args(valid_args))
 
-      expect(files_in('p-product.pivotal')).to include('metadata/metadata.yml')
+      expect(files_in(output_file)).to include('metadata/metadata.yml')
 
-      metadata_contents = extract_contents_from('p-product.pivotal', 'metadata/metadata.yml')
+      metadata_contents = extract_contents_from(output_file, 'metadata/metadata.yml')
       product_metadata = YAML.load(metadata_contents)
 
       expect(product_metadata.fetch('releases').first.fetch('name')).to eq('release-name')
