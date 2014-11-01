@@ -13,12 +13,15 @@ module Hangar
     end
 
     def run!
-      stemcell_path = Dir[File.join(stemcell_dir, '*')].first
-      release_path = Dir[File.join(release_dir, '*')].first
+      stemcell_path = Dir[File.join(stemcell_dir, '*.tgz')].first
+      release_path = Dir[File.join(release_dir, '*.tgz')].first
 
       raise "Could not find a metadata template: #{metadata_template}" unless File.exist?(metadata_template)
       raise "Could not find a stemcell in directory: #{stemcell_dir}" if stemcell_path.nil?
       raise "Could not find a release in directory: #{release_dir}" if release_path.nil?
+
+      puts "Using stemcell: #{stemcell_path}"
+      puts "Using release: #{release_path}"
 
       filename = "#{product_name}.pivotal"
       Zip::File.open(filename, Zip::File::CREATE) do |zip|

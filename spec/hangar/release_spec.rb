@@ -20,4 +20,9 @@ describe Hangar::Release do
   it 'has a file' do
     expect(release.file).to eq('amazing-concourse-5.3.4.tgz')
   end
+  
+  it 'works' do
+    release = Hangar::Release.new('concourse-0.19.0.tgz')
+    release.version
+  end
 end
