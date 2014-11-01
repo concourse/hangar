@@ -3,6 +3,8 @@ require 'spec_helper'
 require 'yaml'
 
 require 'hangar/metadata_template'
+require 'hangar/release'
+require 'hangar/stemcell'
 
 describe Hangar::MetadataTemplate do
   describe 'templating the metadata' do

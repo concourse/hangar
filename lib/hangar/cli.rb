@@ -2,6 +2,7 @@ require 'fileutils'
 require 'optparse'
 require 'zip'
 
+require 'hangar/metadata_template'
 require 'hangar/release'
 require 'hangar/stemcell'
 
