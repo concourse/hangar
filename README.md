@@ -2,6 +2,8 @@
 
 *continuously deliver ops manager products*
 
+![Hangar](http://i.imgur.com/c2xZPk7.jpg)
+
 ## about
 
 Hangar is a tool for continuously delivering Pivotal Ops Manager products. It
