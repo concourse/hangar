@@ -1,29 +1,33 @@
-# Hangar
+# hangar
 
-TODO: Write a gem description
+*continuously deliver ops manager products*
 
-## Installation
+## about
+
+Hangar is a tool for continuously delivering Pivotal Ops Manager products. It
+consumes a stemcell, multiple releases, and a metadata template and builds it
+into the finished Ops Manager product. It can insert templated values into the
+metadata based on the other resource inputs.
+
+## usage
+
+Using Hangar is simple. All of the options are required and you can specify
+multiple release directories.
+
+    Usage: hangar [options]
+        -n, --product-name NAME          name of product to create
+        -v, --product-version VERSION    version of product to create
+        -s, --stemcell-dir DIR           directory containing stemcell
+        -r, --release-dir DIR            directory containing release
+        -m, --metadata-template FILE     metadata template file
+
+## install
 
 Add this line to your application's Gemfile:
 
-    gem 'hangar'
+    gem 'hangar', github: 'concourse/hangar'
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install hangar
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it ( https://github.com/[my-github-username]/hangar/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
