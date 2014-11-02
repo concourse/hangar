@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = %w(xoebus@xoeb.us)
   spec.summary       = 'builds .pivotal products'
   spec.description   = 'a cli for building .pivotal products for deployment'
-  spec.homepage      = ''
+  spec.homepage      = 'https://github.com/concourse/hangar'
   spec.license       = 'MIT'
 
   spec.files         = Dir.glob('{bin,lib}/**/*') + %w(LICENSE README.md)
