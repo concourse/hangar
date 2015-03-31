@@ -1,6 +1,10 @@
 ---
 platform: linux
+
 image: docker:///ruby#2.1
+
+inputs:
+  - name: hangar
 
 run:
   path: hangar/scripts/ci.sh
