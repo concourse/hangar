@@ -2,7 +2,7 @@
 
 *continuously deliver ops manager products*
 
-![Hangar](http://i.imgur.com/c2xZPk7.jpg)
+![Hangar](http://i.imgur.com/HoQHv2Q.jpg?2)
 
 ## about
 
