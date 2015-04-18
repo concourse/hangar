@@ -1,3 +1,7 @@
+require "yaml"
+
+require "archive/tar/minitar"
+
 module Hangar
   class Release
     def initialize(path)
@@ -5,15 +9,39 @@ module Hangar
     end
 
     def name
-      file.split("-")[0..-2].join("-")
-    end
-
-    def file
-      File.basename(@path)
+      manifest.fetch("name")
     end
 
     def version
-      @path.match(/[\d\.]*\d/)[0]
+      manifest.fetch("version")
     end
+
+    def file
+      File.basename(path)
+    end
+
+    private
+
+    def manifest
+      @manifest ||= YAML.load(manifest_file_contents)
+    end
+
+    def manifest_file_contents
+      tgz = Zlib::GzipReader.new(File.open(path, 'rb'))
+
+      Archive::Tar::Minitar::Reader.open(tgz) do |reader|
+        reader.each_entry do |entry|
+          next unless File.basename(entry.full_name) == "release.MF"
+
+          return entry.read
+        end
+      end
+
+      raise "could not find release.MF"
+    ensure
+      tgz.close if tgz
+    end
+
+    attr_reader :path
   end
 end

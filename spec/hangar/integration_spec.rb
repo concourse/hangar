@@ -47,7 +47,7 @@ describe 'Hangar' do
     let(:product_name) { 'p-product' }
     let(:metadata_template_path) { 'spec/assets/metadata/metadata.yml.erb' }
     let(:product_version) { '0.3' }
-    
+
     let(:output_file) { 'p-product-0.3.pivotal' }
 
     let(:valid_args) {
@@ -79,8 +79,8 @@ describe 'Hangar' do
     it 'contains the both correct releases' do
       hangar(args(valid_args))
 
-      expect(files_in(output_file)).to include('releases/release-name-123.2.tgz')
-      expect(files_in(output_file)).to include('releases/other-release-name-1.2.tgz')
+      expect(files_in(output_file)).to include('releases/release-name.tgz')
+      expect(files_in(output_file)).to include('releases/other-release.tgz')
     end
 
     it 'contains valid YAML metadata' do
@@ -91,8 +91,8 @@ describe 'Hangar' do
       metadata_contents = extract_contents_from(output_file, 'metadata/metadata.yml')
       product_metadata = YAML.load(metadata_contents)
 
-      expect(product_metadata.fetch('releases').first.fetch('name')).to eq('release-name')
-      expect(product_metadata.fetch('releases').first.fetch('version')).to eq('123.2')
+      expect(product_metadata.fetch('releases').first.fetch('name')).to eq('concourse')
+      expect(product_metadata.fetch('releases').first.fetch('version')).to eq('0.43.0')
     end
 
     context 'with missing arguments' do

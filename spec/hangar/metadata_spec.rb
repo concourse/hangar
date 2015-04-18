@@ -26,8 +26,8 @@ describe Hangar::MetadataTemplate do
       [
           instance_double(
               Hangar::Release,
-              name: "release-name",
-              file: "release-name-62.3.tgz",
+              name: "concourse",
+              file: "concourse.tgz",
               version: "62.3",
           )
       ]
