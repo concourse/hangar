@@ -23,6 +23,8 @@ multiple release directories.
         -r, --release-dir DIR            directory containing release
         -m, --metadata-template FILE     metadata template file
 
+The metadata template can contain ERB that can be used to insert values such as the product version and any releases into the final metadata. For an example, see the [metadata template that the integration tests use](spec/assets/metadata/metadata.yml.erb).
+
 ## install
 
 Add this line to your application's Gemfile:
