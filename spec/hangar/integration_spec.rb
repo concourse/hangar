@@ -41,7 +41,6 @@ describe 'Hangar' do
   end
 
   describe 'building a .pivotal file' do
-    let(:stemcell_dir) { 'spec/assets/stemcell' }
     let(:release_dir) { 'spec/assets/release' }
     let(:other_release_dir) { 'spec/assets/other-release' }
     let(:product_name) { 'p-product' }
@@ -53,7 +52,6 @@ describe 'Hangar' do
     let(:valid_args) {
       {
           'product-name' => [product_name],
-          'stemcell-dir' => [stemcell_dir],
           'release-dir' => [release_dir, other_release_dir],
           'metadata-template' => [metadata_template_path],
           'product-version' => [product_version]
@@ -68,12 +66,6 @@ describe 'Hangar' do
       expect {
         hangar(args(valid_args))
       }.to change { File.exist? output_file }.from(false).to(true)
-    end
-
-    it 'contains the correct stemcell' do
-      hangar(args(valid_args))
-
-      expect(files_in(output_file)).to include('stemcells/bosh-stemcell-2751.3-vsphere-esxi-ubuntu-trusty-go_agent.tgz')
     end
 
     it 'contains the both correct releases' do
@@ -112,14 +104,6 @@ describe 'Hangar' do
         }.to raise_error /Please specify a product version \(--product-version\)/
       end
 
-      it 'returns an error if no stemcell directory is given' do
-        missing_stemcell_dir = valid_args.reject { |k,v| k == 'stemcell-dir' }
-
-        expect {
-          hangar(args(missing_stemcell_dir))
-        }.to raise_error /Please specify a stemcell directory \(--stemcell-dir\)/
-      end
-
       it 'returns an error if no metadata template is given' do
         missing_template_path = valid_args.reject { |k,v| k == 'metadata-template' }
 
@@ -138,21 +122,12 @@ describe 'Hangar' do
     end
 
     context 'with missing resources' do
-      it 'returns an error if no stemcell could be found' do
-        bad_stemcell = valid_args.dup
-        bad_stemcell.store('stemcell-dir', ['a/missing/dir'])
-
-        expect {
-          hangar(args(bad_stemcell))
-        }.to raise_error /Could not find a stemcell in directory: a\/missing\/dir/
-      end
-
       it 'returns an error if no metadata could be found' do
-        bad_stemcell = valid_args.dup
-        bad_stemcell.store('metadata-template', ['a/missing/file.yml.erb'])
+        bad_metadata = valid_args.dup
+        bad_metadata.store('metadata-template', ['a/missing/file.yml.erb'])
 
         expect {
-          hangar(args(bad_stemcell))
+          hangar(args(bad_metadata))
         }.to raise_error /Could not find a metadata template: a\/missing\/file.yml.erb/
       end
 

@@ -7,7 +7,7 @@
 ## about
 
 Hangar is a tool for continuously delivering Pivotal Ops Manager products. It
-consumes a stemcell, multiple releases, and a metadata template and builds it
+consumes multiple releases and a metadata template and builds it
 into the finished Ops Manager product. It can insert templated values into the
 metadata based on the other resource inputs.
 
@@ -19,7 +19,6 @@ multiple release directories.
     Usage: hangar [options]
         -n, --product-name NAME          name of product to create
         -v, --product-version VERSION    version of product to create
-        -s, --stemcell-dir DIR           directory containing stemcell
         -r, --release-dir DIR            directory containing release
         -m, --metadata-template FILE     metadata template file
 

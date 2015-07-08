@@ -4,7 +4,6 @@ require 'zip'
 
 require 'hangar/metadata_template'
 require 'hangar/release'
-require 'hangar/stemcell'
 
 module Hangar
   class Cli
@@ -13,9 +12,6 @@ module Hangar
     end
 
     def run!
-      stemcell_path = Dir[File.join(stemcell_dir, '*.tgz')].first
-      raise "Could not find a stemcell in directory: #{stemcell_dir}" if stemcell_path.nil?
-      
       release_paths = release_dirs.map do |dir|
         release_path = Dir[File.join(dir, '*.tgz')].first
         raise "Could not find a release in directory: #{dir}" if release_path.nil?
@@ -26,14 +22,12 @@ module Hangar
 
       filename = "#{product_name}-#{product_version}.pivotal"
       Zip::File.open(filename, Zip::File::CREATE) do |zip|
-        zip.add(File.join('stemcells', File.basename(stemcell_path)), stemcell_path)
-        
         release_paths.each do |path|
           zip.add(File.join('releases', File.basename(path)), path)
         end
 
         zip.get_output_stream('metadata/metadata.yml') do |os|
-          os.write template_result(stemcell_path, release_paths, product_version)
+          os.write template_result(release_paths, product_version)
         end
       end
     end
@@ -42,15 +36,10 @@ module Hangar
 
     attr_reader :argv
 
-    def stemcell(path)
-      Stemcell.new(path)
-    end
-
-    def template_result(stemcell_path, release_paths, product_version)
-      stemcell = stemcell(stemcell_path)
+    def template_result(release_paths, product_version)
       releases = release_paths.map { |path| Release.new(path) }
 
-      MetadataTemplate.from_file(metadata_template).result(product_name, product_version, stemcell, releases)
+      MetadataTemplate.from_file(metadata_template).result(product_name, product_version, releases)
     end
 
     def product_name
@@ -65,12 +54,6 @@ module Hangar
       }
     end
 
-    def stemcell_dir
-      options.fetch(:stemcell_dir) {
-        raise OptionParser::MissingArgument, 'Please specify a stemcell directory (--stemcell-dir)'
-      }
-    end
-
     def release_dirs
       dirs = options.fetch(:release_dirs)
 
@@ -78,7 +61,7 @@ module Hangar
         raise OptionParser::MissingArgument,
           'Please specify a release directory (--release-dir)'
       end
-      
+
       dirs
     end
 
@@ -102,10 +85,6 @@ module Hangar
 
         opts.on('-v', '--product-version VERSION', 'version of product to create') do |v|
           options[:product_version] = v
-        end
-
-        opts.on('-s', '--stemcell-dir DIR', 'directory containing stemcell') do |s|
-          options[:stemcell_dir] = s
         end
 
         opts.on('-r', '--release-dir DIR', 'directory containing release') do |r|

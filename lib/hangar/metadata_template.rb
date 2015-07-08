@@ -11,8 +11,8 @@ module Hangar
       @template = ERB.new(template)
     end
 
-    def result(product_name, product_version, stemcell, releases)
-      context = Context.new(product_name, product_version, stemcell, releases)
+    def result(product_name, product_version, releases)
+      context = Context.new(product_name, product_version, releases)
       template.result(context.get_binding)
     end
 
@@ -21,10 +21,9 @@ module Hangar
     attr_reader :template
 
     class Context
-      def initialize(product_name, product_version, stemcell, releases)
+      def initialize(product_name, product_version, releases)
         @product_name = product_name
         @product_version = product_version
-        @stemcell = stemcell
         @releases = releases
       end
 
@@ -38,14 +37,6 @@ module Hangar
 
       def product_version
         wrap(@product_version)
-      end
-
-      def stemcell
-        OpenStruct.new(
-            name: wrap(@stemcell.name),
-            file: wrap(@stemcell.file),
-            version: wrap(@stemcell.version),
-        )
       end
 
       def releases
