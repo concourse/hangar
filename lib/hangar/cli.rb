@@ -13,10 +13,10 @@ module Hangar
 
     def run!
       release_paths = release_dirs.map do |dir|
-        release_path = Dir[File.join(dir, '*.tgz')].first
-        raise "Could not find a release in directory: #{dir}" if release_path.nil?
-        release_path
-      end
+        release_paths = Dir[File.join(dir, '*.tgz')]
+        raise "Could not find a release in directory: #{dir}" if release_paths.empty?
+        release_paths
+      end.flatten!
 
       raise "Could not find a metadata template: #{metadata_template}" unless File.exist?(metadata_template)
 

@@ -72,6 +72,7 @@ describe 'Hangar' do
       hangar(args(valid_args))
 
       expect(files_in(output_file)).to include('releases/release-name.tgz')
+      expect(files_in(output_file)).to include('releases/second-release-name.tgz')
       expect(files_in(output_file)).to include('releases/other-release.tgz')
     end
 
