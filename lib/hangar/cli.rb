@@ -2,6 +2,7 @@ require 'fileutils'
 require 'optparse'
 require 'zip'
 
+require 'hangar/content_migrations'
 require 'hangar/metadata_template'
 require 'hangar/release'
 
@@ -19,6 +20,13 @@ module Hangar
       end.flatten!
 
       raise "Could not find a metadata template: #{metadata_template}" unless File.exist?(metadata_template)
+      raise "Could not find a content migrations template: #{content_migrations}" unless File.exist?(content_migrations)
+
+      migrations_path = migrations_dir.map do |dir|
+        migrations_path = Dir[File.join(dir)]
+        raise "Could not find migrations directory: #{dir}" if migrations_path.empty?
+        migrations_path
+      end.flatten!
 
       filename = "#{product_name}-#{product_version}.pivotal"
       Zip::File.open(filename, Zip::File::CREATE) do |zip|
@@ -29,12 +37,24 @@ module Hangar
         zip.get_output_stream('metadata/metadata.yml') do |os|
           os.write template_result(release_paths, product_version)
         end
+
+        zip.get_output_stream('content_migrations/migrations.yml') do |os|
+          os.write content_migration_result(product_version)
+        end
+
+        migrations_path.each do |path|
+          zip.add(File.join('migrations', File.basename(path)), path)
+        end
       end
     end
 
     private
 
     attr_reader :argv
+
+    def content_migration_result(product_version)
+      ContentMigrations.from_file(content_migrations).result(product_name, product_version)
+    end
 
     def template_result(release_paths, product_version)
       releases = release_paths.map { |path| Release.new(path) }
@@ -71,11 +91,28 @@ module Hangar
       }
     end
 
+    def content_migrations
+      options.fetch(:content_migrations) {
+        raise OptionParser::MissingArgument, 'Please specify a content migrations template (--content-migrations)'
+      }
+    end
+
+    def migrations_dir
+      dir = options.fetch(:migrations_dir)
+
+      if dir.empty?
+        raise OptionParser::MissingArgument, 'Please specify a migrations directory (--migrations)'
+      end
+
+      dir
+    end
+
     def options
       return @parsed_options if @parsed_options
 
       options = {
-        release_dirs: []
+        release_dirs: [],
+        migrations_dir: []
       }
 
       OptionParser.new do |opts|
@@ -93,6 +130,14 @@ module Hangar
 
         opts.on('-m', '--metadata-template FILE', 'metadata template file') do |m|
           options[:metadata_template] = m
+        end
+
+        opts.on('-c', '--content-migrations FILE', 'content migrations file') do |c|
+          options[:content_migrations] = c
+        end
+
+        opts.on('-g', '--migrations DIR', 'directory containing javascript migrations') do |g|
+          options[:migrations_dir] << g
         end
       end.parse!(argv)
 
