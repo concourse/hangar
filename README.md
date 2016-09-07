@@ -21,6 +21,8 @@ multiple release directories.
         -v, --product-version VERSION    version of product to create
         -r, --release-dir DIR            directory containing release
         -m, --metadata-template FILE     metadata template file
+        -c, --content-migrations FILE    content migrations file
+        -g  --migrations DIR'            directory containing javascript migrations
 
 The metadata template can contain ERB that can be used to insert values such as the product version and any releases into the final metadata. For an example, see the [metadata template that the integration tests use](spec/assets/metadata/metadata.yml.erb).
 
