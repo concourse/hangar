@@ -46,6 +46,8 @@ describe 'Hangar' do
     let(:product_name) { 'p-product' }
     let(:metadata_template_path) { 'spec/assets/metadata/metadata.yml.erb' }
     let(:product_version) { '0.3' }
+    let(:content_migrations) { 'spec/assets/content-migrations.yml' } # TODO: content-migrations isn't even used. remove from hangar + specs
+    let(:migrations) { 'spec/assets/' } # TODO: migrations isn't even used. remove from hangar + specs
 
     let(:output_file) { 'p-product-0.3.pivotal' }
 
@@ -54,7 +56,9 @@ describe 'Hangar' do
           'product-name' => [product_name],
           'release-dir' => [release_dir, other_release_dir],
           'metadata-template' => [metadata_template_path],
-          'product-version' => [product_version]
+          'product-version' => [product_version],
+          'content-migrations' => [content_migrations],
+          'migrations' => [migrations],
       }
     }
 
