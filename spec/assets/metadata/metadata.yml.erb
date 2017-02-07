@@ -5,3 +5,6 @@ releases:
 - name: <%= releases["concourse"].name %>
   file: <%= releases["concourse"].file %>
   version: <%= releases["concourse"].version %>
+stemcell_criteria:
+  os: ubuntu-trusty
+  version: <%= stemcell_version %>

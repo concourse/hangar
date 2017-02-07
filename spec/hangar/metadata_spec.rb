@@ -7,12 +7,13 @@ require 'hangar/release'
 
 describe Hangar::MetadataTemplate do
   describe 'templating the metadata' do
-    let(:result) { template.result(product_name, product_version, releases) }
+    let(:result) { template.result(product_name, product_version, stemcell_version, releases) }
     let(:template) { Hangar::MetadataTemplate.from_file('spec/assets/metadata/metadata.yml.erb') }
     let(:output) { YAML.load(result) }
 
     let(:product_name) { 'p-product' }
     let(:product_version) { '1.0.0.0' }
+    let(:stemcell_version) { '3263.17' }
     let(:releases) {
       [
           instance_double(
@@ -30,6 +31,10 @@ describe Hangar::MetadataTemplate do
 
     it 'templates the product version' do
       expect(output.fetch('product_version')).to eq(product_version)
+    end
+
+    it 'templates the stemcell criteria version' do
+      expect(output.fetch('stemcell_criteria').fetch('version')).to eq(stemcell_version)
     end
 
     it 'templates the releases' do

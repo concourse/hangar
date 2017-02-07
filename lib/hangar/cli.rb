@@ -59,7 +59,7 @@ module Hangar
     def template_result(release_paths, product_version)
       releases = release_paths.map { |path| Release.new(path) }
 
-      MetadataTemplate.from_file(metadata_template).result(product_name, product_version, releases)
+      MetadataTemplate.from_file(metadata_template).result(product_name, product_version, stemcell_version, releases)
     end
 
     def product_name
@@ -71,6 +71,12 @@ module Hangar
     def product_version
       options.fetch(:product_version) {
         raise OptionParser::MissingArgument, 'Please specify a product version (--product-version)'
+      }
+    end
+
+    def stemcell_version
+      options.fetch(:stemcell_version) {
+        raise OptionParser::MissingArgument, 'Please specify a stemcell version (--stemcell-version)'
       }
     end
 
@@ -122,6 +128,10 @@ module Hangar
 
         opts.on('-v', '--product-version VERSION', 'version of product to create') do |v|
           options[:product_version] = v
+        end
+
+        opts.on('-s', '--stemcell-version VERSION', 'version of stemcell to require in product') do |v|
+          options[:stemcell_version] = v
         end
 
         opts.on('-r', '--release-dir DIR', 'directory containing release') do |r|

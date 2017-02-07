@@ -46,6 +46,7 @@ describe 'Hangar' do
     let(:product_name) { 'p-product' }
     let(:metadata_template_path) { 'spec/assets/metadata/metadata.yml.erb' }
     let(:product_version) { '0.3' }
+    let(:stemcell_version) { '3263' }
     let(:content_migrations) { 'spec/assets/content-migrations.yml' } # TODO: content-migrations isn't even used. remove from hangar + specs
     let(:migrations) { 'spec/assets/' } # TODO: migrations isn't even used. remove from hangar + specs
 
@@ -57,6 +58,7 @@ describe 'Hangar' do
           'release-dir' => [release_dir, other_release_dir],
           'metadata-template' => [metadata_template_path],
           'product-version' => [product_version],
+          'stemcell-version' => [stemcell_version],
           'content-migrations' => [content_migrations],
           'migrations' => [migrations],
       }
@@ -90,6 +92,7 @@ describe 'Hangar' do
 
       expect(product_metadata.fetch('releases').first.fetch('name')).to eq('concourse')
       expect(product_metadata.fetch('releases').first.fetch('version')).to eq('0.43.0')
+      expect(product_metadata.fetch('stemcell_criteria').fetch('version')).to eq('3263')
     end
 
     context 'with missing arguments' do
@@ -107,6 +110,14 @@ describe 'Hangar' do
         expect {
           hangar(args(missing_product_version))
         }.to raise_error /Please specify a product version \(--product-version\)/
+      end
+
+      it 'returns an error if no stemcell version is given' do
+        missing_stemcell_version = valid_args.reject { |k,v| k == 'stemcell-version' }
+
+        expect {
+          hangar(args(missing_stemcell_version))
+        }.to raise_error /Please specify a stemcell version \(--stemcell-version\)/
       end
 
       it 'returns an error if no metadata template is given' do

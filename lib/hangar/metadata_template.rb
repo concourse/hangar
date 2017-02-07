@@ -11,8 +11,8 @@ module Hangar
       @template = ERB.new(template)
     end
 
-    def result(product_name, product_version, releases)
-      context = Context.new(product_name, product_version, releases)
+    def result(product_name, product_version, stemcell_version, releases)
+      context = Context.new(product_name, product_version, stemcell_version, releases)
       template.result(context.get_binding)
     end
 
@@ -21,9 +21,10 @@ module Hangar
     attr_reader :template
 
     class Context
-      def initialize(product_name, product_version, releases)
+      def initialize(product_name, product_version, stemcell_version, releases)
         @product_name = product_name
         @product_version = product_version
+        @stemcell_version = stemcell_version
         @releases = releases
       end
 
@@ -33,6 +34,10 @@ module Hangar
 
       def product_name
         wrap(@product_name)
+      end
+
+      def stemcell_version
+        wrap(@stemcell_version)
       end
 
       def product_version
